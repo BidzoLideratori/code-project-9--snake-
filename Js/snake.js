@@ -1,81 +1,109 @@
 import { elem } from "./elementIdData.js";
 
 export class snake {
-  iniciateSnake() {}
+  static move() {
+    let propertyValue = elem.currentDirection;
+    let change = elem.currentChange;
+    elem.interval = setInterval(() => {
+      document.addEventListener("keydown", (e) => {
+        elem.highScore.innerHTML = `Your Score: ${elem.counter}`;
+        elem.input = e.key;
+        if (elem.input == "ArrowUp") {
+          propertyValue = "top";
+          change = -20;
+          elem.currentChange = -20;
+          elem.currentDirection = "top";
+        } else if (elem.input == "ArrowDown") {
+          propertyValue = "top";
+          change = 20;
+          elem.currentChange = 20;
+          elem.currentDirection = "top";
+        } else if (elem.input == "ArrowLeft") {
+          propertyValue = "left";
+          change = -20;
+          elem.currentChange = -20;
+          elem.currentDirection = "left";
+        } else if (elem.input == "ArrowRight") {
+          propertyValue = "left";
+          change = 20;
+          elem.currentChange = 20;
+          elem.currentDirection = "left";
+        }
+      });
+      let computed = getComputedStyle(
+        document.getElementById("snake")
+      ).getPropertyValue(propertyValue);
+      let newPosition = parseInt(computed) + change;
 
-  static rightMove() {
-    let left = getComputedStyle(
-      document.getElementById("snake")
-    ).getPropertyValue("left");
-    let newPosition = parseInt(left) + 20;
-    if (newPosition <= 981) {
-      document.getElementById("snake").style.left = newPosition + "px";
-    }
-  }
-  static leftMove() {
-    let left = getComputedStyle(
-      document.getElementById("snake")
-    ).getPropertyValue("left");
-    let newPosition = parseInt(left) - 20;
-    if (newPosition >= 0) {
-      document.getElementById("snake").style.left = newPosition + "px";
-    }
-  }
-  static downMove() {
-    let top = getComputedStyle(
-      document.getElementById("snake")
-    ).getPropertyValue("top");
-    let newPosition = parseInt(top) + 20;
-    if (newPosition <= 580) {
-      document.getElementById("snake").style.top = newPosition + "px";
-    }
-  }
-  static upMove() {
-    let top = getComputedStyle(
-      document.getElementById("snake")
-    ).getPropertyValue("top");
-    let newPosition = parseInt(top) - 20;
-    if (newPosition >= 0) {
-      document.getElementById("snake").style.top = newPosition + "px";
-    }
-  }
+      let computedLeft =
+        parseInt(
+          getComputedStyle(document.getElementById("snake")).getPropertyValue(
+            "left"
+          )
+        ) + change;
+      let computedTop =
+        parseInt(
+          getComputedStyle(document.getElementById("snake")).getPropertyValue(
+            "top"
+          )
+        ) + change;
 
-  static autoMove(inputKey) {
-    var interval;
-    if (inputKey == "ArrowUp") {
-      clearInterval(interval);
-      interval = setInterval(() => {
-        snake.upMove();
-      }, 250);
-    } else if (inputKey == "ArrowDown") {
-      clearInterval(interval);
-      interval = setInterval(() => {
-        snake.downMove();
-      }, 250);
-    } else if (inputKey == "ArrowLeft") {
-      clearInterval(interval);
-      interval = setInterval(() => {
-        snake.leftMove();
-      }, 250);
-    } else if (inputKey == "ArrowRight") {
-      clearInterval(interval);
-      interval = setInterval((event) => {
-        snake.rightMove();
-      }, 250);
-    }
-  }
-
-  static snakeMove() {
-    document.addEventListener("keydown", (event) => {
-      if (event.key == "ArrowUp") {
-        snake.autoMove(event.key);
-      } else if (event.key === "ArrowLeft") {
-        snake.autoMove(event.key);
-      } else if (event.key === "ArrowRight") {
-        snake.autoMove(event.key);
-      } else if (event.key === "ArrowDown") {
-        snake.autoMove(event.key);
+      if (
+        computedLeft < 0 ||
+        computedLeft > 980 ||
+        computedTop < 0 ||
+        computedTop > 580
+      ) {
+        if (confirm("you lose")) {
+          document.getElementById("snake").style.top = `${10}px`;
+          document.getElementById("snake").style.left = `${10}px`;
+          location.reload();
+        } else {
+          location.reload();
+        }
       }
-    });
+      snake.renderApple(
+        parseInt(
+          getComputedStyle(document.getElementById("snake")).getPropertyValue(
+            "left"
+          )
+        ),
+        parseInt(
+          getComputedStyle(document.getElementById("snake")).getPropertyValue(
+            "top"
+          )
+        )
+      );
+      if (elem.input === "ArrowUp" || elem.input === "ArrowDown") {
+        document.getElementById("snake").style.top = `${newPosition}px`;
+      } else if (elem.input === "ArrowLeft" || elem.input === "ArrowRight") {
+        document.getElementById("snake").style.left = `${newPosition}px`;
+      }
+    }, 100);
+  }
+
+  static renderApple(objectX, objectY) {
+    if (
+      objectX ===
+        parseInt(
+          getComputedStyle(document.getElementById("appleId")).getPropertyValue(
+            "left"
+          )
+        ) &&
+      objectY ===
+        parseInt(
+          getComputedStyle(document.getElementById("appleId")).getPropertyValue(
+            "top"
+          )
+        )
+    ) {
+      elem.counter += 1;
+      document.getElementById("appleId").style.left = `${
+        Math.floor(Math.random() * 50) * 20
+      }px`;
+      document.getElementById("appleId").style.top = `${
+        Math.floor(Math.random() * 30) * 20
+      }px`;
+    }
   }
 }
