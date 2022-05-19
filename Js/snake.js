@@ -99,7 +99,7 @@ export class snake {
           )
         )
     ) {
-      elem.counter += 1;
+      elem.counter += 2;
       document.getElementById("appleId").style.left = `${
         Math.floor(Math.random() * 50) * 20
       }px`;
